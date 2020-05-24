@@ -96,13 +96,13 @@ function init(){
                 break;
             case "View Budget of Department":
                 viewBudget();
-                 break;
+                break;
             
         }
     });
 }
 function viewAll(){
-    var query = connection.query("SELECT * FROM employee", function(err, data) {
+    connection.query("SELECT name as 'Department', first_name as 'First Name', last_name as 'Last Name', title as 'Role' FROM employee JOIN role ON role_id = role.id JOIN department ON department_id = department.id ORDER BY name", function(err, data) {
          if (err) throw err;
          console.table(data);
         init();
