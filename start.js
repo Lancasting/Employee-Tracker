@@ -10,7 +10,7 @@ const consoleTable = require("console.table");
 const inquirer = require("inquirer");
 
 const printMessage = require('print-message');
- 
+
 function validateString(answer) {
     if (answer != "" && isNaN(parseInt(answer))) {
         return true;
@@ -27,10 +27,10 @@ function validateNumber(answer) {
 printMessage([
     "Employee Tracker",
     "Follow the prompts to view employees and make changes",
-   
+
 ]);
 
-function init(){
+function init() {
     inquirer.prompt([
         {
             type: "list",
@@ -38,7 +38,7 @@ function init(){
             message: "Select an option:",
             choices: [
                 "View All Employees",
-                "View All Employess By Role",
+                "View All Employees By Role",
                 "View All Employees By Manager",
                 "View All Employees By Department",
                 "Add An Employee",
@@ -48,12 +48,12 @@ function init(){
                 "Remove Department",
                 "Remove Role",
                 "Update Employee's Role",
-                "Update Employee's Manager",
-                "Update Employee's Department",
-                "View Budget of Department"
+                // "Update Employee's Manager",
+                // "Update Employee's Department",
+                // "View Budget of Department"
             ]
         }
-    ]).then(function(answer) {
+    ]).then(function (answer) {
         switch (answer.init) {
             case "View All Employees":
                 viewAll();
@@ -82,165 +82,254 @@ function init(){
             case "Remove Department":
                 removeDepartment();
                 break;
-             case "Remove Role":
+            case "Remove Role":
                 removeRole();
                 break;
             case "Update Employee's Role":
                 updateEmpRole()
                 break;
-            case "Update Employee's Manager":
-                updateEmpManager()
-                break;
-            case "Update Employee's Department":
-                updateEmpDepartment()
-                break;
-            case "View Budget of Department":
-                viewBudget();
-                break;
-            
+            // case "Update Employee's Manager":
+            //     updateEmpManager()
+            //     break;
+            // case "Update Employee's Department":
+            //     updateEmpDepartment()
+            //     break;
+            // case "View Budget of Department":
+            //     viewBudget();
+            //     break;
+
         }
     });
 }
-function viewAll(){
-    connection.query("SELECT name as 'Department', first_name as 'First Name', last_name as 'Last Name', title as 'Role' FROM employee JOIN role ON role_id = role.id JOIN department ON department_id = department.id ORDER BY name", function(err, data) {
-         if (err) throw err;
-         console.table(data);
+function viewAll() {
+    connection.query("SELECT name as 'Department', first_name as 'First Name', last_name as 'Last Name', title as 'Role' FROM employee JOIN role ON role_id = role.id JOIN department ON department_id = department.id ORDER BY name", function (err, data) {
+        if (err) throw err;
+        console.table(data);
         init();
-        });
+    });
 }
-function addRole() {
-    var query = connection.query("SELECT id, department FROM department", function(err, data) {
+function viewAllByRole() {
+
+    connection.query("SELECT role.title FROM role", function (err, data) {
         if (err) throw err;
         // let choices = data.map(x => `${x.id} - ${x.department}`);
         let choices = [];
         for (let i = 0; i < data.length; i++) {
-            choices.push(data[i].id + " - " + data[i].department);
+            choices.push(data[i]);
         }
         inquirer.prompt([
             {
-                type: "input",
-                name: "title",
-                message: "Enter the role name:",
-                validate: validateString
-            },
-            {
-                type: "input",
-                name: "salary",
-                message: "Enter the salary:",
-                validate: validateNumber
-            },
-            {
                 type: "list",
-                name: "department",
-                message: "Select the department:",
+                name: "viewByRole",
+                message: "What role would you like to look at?",
                 choices: [...choices]
             }
-        ]).then(function(data) {
-            var arr = data.department.split(" ");
-            var deptID = parseInt(arr[0]);
-            var query = connection.query(`INSERT INTO role (title, salary, department_id) VALUES ('${data.title}', ${data.salary}, ${deptID})`, function(err, data) {
+        ]).then(function (res) {
+            var query = ("SELECT role.title FROM role WHERE ?")
+            connection.query(query, [res], function (err, res) {
                 if (err) throw err;
-                init();
-            });
-        });
-    });
+                for (var i = 0; i < res.length; i++) {
+                    console.log(res);
+                }
+            })
+        })
+    })
 }
-function addDepartment() {
-    inquirer.prompt([
-        {
-            type: "input",
-            name: "department",
-            message: "Enter the department's name:",
-            validate: validateString
-        }
-    ]).then(function(data) {
-        var query = connection.query(`INSERT INTO department (department) VALUES ('${data.department}');`, function(err, data) {
+function viewAllByManager() {
+    function viewAllByRole() {
+
+        connection.query("SELECT employee.manager_id, employee.id FROM employee JOIN employee.manager_id = employee.id", function (err, data) {
             if (err) throw err;
-            return data;
-            init();
-    });
-});
-}
-function updateEmp() {
-    const emp = {
-        first_name: "",
-        last_name: "",
-        role_id: 0,
-        manager_id: 0,
-        empID: 0
-    };
-    var query = connection.query("SELECT id, first_name, last_name FROM employee", function(err, data) {
-        if (err) throw err;
-        let choices = data.map(x => `${x.id} - ${x.first_name} ${x.last_name}`);
-        inquirer.prompt([
-            {
-                type: "list",
-                name: "employee",
-                message: "Select an employee:",
-                choices: [...choices]
+            // let choices = data.map(x => `${x.id} - ${x.department}`);
+            let choices = [];
+            for (let i = 0; i < data.length; i++) {
+                choices.push(data[i]);
             }
-        ]).then(function(data) {
-            var arr = data.employee.split(" ");
-            emp.empID = parseInt(arr[0]);
             inquirer.prompt([
                 {
-                    type: "input",
-                    name: "firstName",
-                    message: "Enter the employee's first name:",
-                    validate: validateString
-                },
-                {
-                    type: "input",
-                    name: "lastName",
-                    message: "Enter the employee's last name:",
-                    validate: validateString
+                    type: "list",
+                    name: "viewByRole",
+                    message: "What Manager whould you like to look at?",
+                    choices: [...choices]
                 }
-            ]).then(function(data) {
-                emp.first_name = data.firstName;
-                emp.last_name = data.lastName;
-                var query = connection.query("SELECT id, title FROM role", function(err, data) {
+            ]).then(function (res) {
+                var query = ("SELECT role.title FROM role WHERE ?")
+                connection.query(query, [res], function (err, res) {
                     if (err) throw err;
-                    let choices = data.map(x => `${x.id} - ${x.title}`);
-                    inquirer.prompt([
-                        {
-                            type: "list",
-                            name: "title",
-                            message: "Select a title:",
-                            choices: [...choices]
-                        }
-                    ]).then(function(data) {
-                        var arr = data.title.split(" ");
-                        emp.role_id = parseInt(arr[0]);
-                        var query = connection.query("SELECT id, first_name, last_name FROM employee", function(err, data) {
-                            if (err) throw err;
-                            let choices = data.map(x => `${x.id} - ${x.first_name} ${x.last_name}`);
-                            choices.push("This employee does not have a manager");
-                            inquirer.prompt([
-                                {
-                                    type: "list",
-                                    name: "manager",
-                                    message: "Select this employee's manager:",
-                                    choices: [...choices]
-                                }
-                            ]).then(function(data) {
-                                if (data.manager === "This employee does not have a manager") {
-                                    emp.manager_id = null;
-                                }
-                                else {
-                                    var arr = data.manager.split(" ");
-                                    emp.manager_id = parseInt(arr[0]);
-                                }
-                                var query = connection.query(`UPDATE employee SET first_name = '${emp.first_name}', last_name = '${emp.last_name}', role_id = ${emp.role_id}, manager_id = ${emp.manager_id} WHERE id = ${emp.empID}`, function(err, data) {
-                                    if (err) throw err;
-                                    init();
-                                    return data;
-                                });
-                            });
-                        });
-                    });
-                });
-            });
-        });
-    });
+                    for (var i = 0; i < res.length; i++) {
+                        console.log(res);
+                    }
+                })
+            })
+        })
+    }
 }
+function viewAllByDepartment() {
+    connection.query()
+}
+function addEmployee() {
+    connection.query()
+}
+function addDepartment() {
+    connection.query()
+}
+function addRole() {
+    connection.query()
+}
+function removeEmployee() {
+    connection.query()
+}
+function removeDepartment() {
+    connection.query()
+}
+function removeRole() {
+    connection.query()
+}
+function updateEmpRole() {
+    connection.query()
+}
+// function updateEmpManager(){
+//     connection.query()
+// }
+// function updateEmpDepartment(){
+//     connection.query()
+// }
+// function viewbu(){
+//     connection.query()
+// }
 init();
+    // function addRole() {
+    //     var query = connection.query("SELECT id, department FROM department", function(err, data) {
+    //         if (err) throw err;
+    //         // let choices = data.map(x => `${x.id} - ${x.department}`);
+    //         let choices = [];
+    //         for (let i = 0; i < data.length; i++) {
+    //             choices.push(data[i].id + " - " + data[i].department);
+    //         }
+    //         inquirer.prompt([
+    //             {
+    //                 type: "input",
+    //                 name: "title",
+    //                 message: "Enter the role name:",
+    //                 validate: validateString
+    //             },
+    //             {
+    //                 type: "input",
+    //                 name: "salary",
+    //                 message: "Enter the salary:",
+    //                 validate: validateNumber
+    //             },
+    //             {
+    //                 type: "list",
+    //                 name: "department",
+    //                 message: "Select the department:",
+    //                 choices: [...choices]
+    //             }
+    //         ]).then(function(data) {
+    //             var arr = data.department.split(" ");
+    //             var deptID = parseInt(arr[0]);
+    //             var query = connection.query(`INSERT INTO role (title, salary, department_id) VALUES ('${data.title}', ${data.salary}, ${deptID})`, function(err, data) {
+    //                 if (err) throw err;
+    //                 init();
+    //             });
+    //         });
+    //     });
+    // }
+    // function addDepartment() {
+    //     inquirer.prompt([
+    //         {
+    //             type: "input",
+    //             name: "department",
+    //             message: "Enter the department's name:",
+    //             validate: validateString
+    //         }
+    //     ]).then(function(data) {
+    //         var query = connection.query(`INSERT INTO department (department) VALUES ('${data.department}');`, function(err, data) {
+    //             if (err) throw err;
+    //             return data;
+    //             init();
+    //     });
+    // });
+    // }
+    // function updateEmployee() {
+    //     const emp = {
+    //         first_name: "",
+    //         last_name: "",
+    //         role_id: 0,
+    //         manager_id: 0,
+    //         empID: 0
+    //     };
+    //     var query = connection.query("SELECT id, first_name, last_name FROM employee", function(err, data) {
+    //         if (err) throw err;
+    //         let choices = data.map(x => `${x.id} - ${x.first_name} ${x.last_name}`);
+    //         inquirer.prompt([
+    //             {
+    //                 type: "list",
+    //                 name: "employee",
+    //                 message: "Select an employee:",
+    //                 choices: [...choices]
+    //             }
+    //         ]).then(function(data) {
+    //             var arr = data.employee.split(" ");
+    //             emp.empID = parseInt(arr[0]);
+    //             inquirer.prompt([
+    //                 {
+    //                     type: "input",
+    //                     name: "firstName",
+    //                     message: "Enter the employee's first name:",
+    //                     validate: validateString
+    //                 },
+    //                 {
+    //                     type: "input",
+    //                     name: "lastName",
+    //                     message: "Enter the employee's last name:",
+    //                     validate: validateString
+    //                 }
+    //             ]).then(function(data) {
+    //                 emp.first_name = data.firstName;
+    //                 emp.last_name = data.lastName;
+    //                 var query = connection.query("SELECT id, title FROM role", function(err, data) {
+    //                     if (err) throw err;
+    //                     let choices = data.map(x => `${x.id} - ${x.title}`);
+    //                     inquirer.prompt([
+    //                         {
+    //                             type: "list",
+    //                             name: "title",
+    //                             message: "Select a title:",
+    //                             choices: [...choices]
+    //                         }
+    //                     ]).then(function(data) {
+    //                         var arr = data.title.split(" ");
+    //                         emp.role_id = parseInt(arr[0]);
+    //                         var query = connection.query("SELECT id, first_name, last_name FROM employee", function(err, data) {
+    //                             if (err) throw err;
+    //                             let choices = data.map(x => `${x.id} - ${x.first_name} ${x.last_name}`);
+    //                             choices.push("This employee does not have a manager");
+    //                             inquirer.prompt([
+    //                                 {
+    //                                     type: "list",
+    //                                     name: "manager",
+    //                                     message: "Select this employee's manager:",
+    //                                     choices: [...choices]
+    //                                 }
+    //                             ]).then(function(data) {
+    //                                 if (data.manager === "This employee does not have a manager") {
+    //                                     emp.manager_id = null;
+    //                                 }
+    //                                 else {
+    //                                     var arr = data.manager.split(" ");
+    //                                     emp.manager_id = parseInt(arr[0]);
+    //                                 }
+    //                                 var query = connection.query(`UPDATE employee SET first_name = '${emp.first_name}', last_name = '${emp.last_name}', role_id = ${emp.role_id}, manager_id = ${emp.manager_id} WHERE id = ${emp.empID}`, function(err, data) {
+    //                                     if (err) throw err;
+    //                                     init();
+    //                                     return data;
+    //                                 });
+    //                             });
+    //                         });
+    //                     });
+    //                 });
+    //             });
+    //         });
+    //     });
+    // }
