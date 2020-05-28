@@ -112,11 +112,16 @@ function viewAllByRole() {
 
     connection.query("SELECT role.title FROM role", function (err, data) {
         if (err) throw err;
-        // let choices = data.map(x => `${x.id} - ${x.department}`);
-        let choices = [];
-        for (let i = 0; i < data.length; i++) {
-            choices.push(data[i]);
+        //  console.log(data);
+         // let choices = data.map(x => `${x.id} - ${x.department}`);
+         let choices = [];
+         for (let i = 0; i < data.length; i++) {
+         choices.push(data[i].title);
+        //  console.table(data);
         }
+
+        // var choices = Object.values(data);
+        console.log(choices);
         inquirer.prompt([
             {
                 type: "list",
@@ -125,12 +130,12 @@ function viewAllByRole() {
                 choices: [...choices]
             }
         ]).then(function (res) {
-            var query = ("SELECT role.title FROM role WHERE ?")
-            connection.query(query, [res], function (err, res) {
+            var results = Object.values(res);
+            var query = `SELECT employee.first_name, employee.last_name, employee.role_id, role.title FROM employee
+             LEFT JOIN role ON employee.role_id = role.id WHERE role.title = ?;`
+            connection.query(query, [results[0]], function (err, res) {
                 if (err) throw err;
-                for (var i = 0; i < res.length; i++) {
-                    console.log(res);
-                }
+                console.table(res);
             })
         })
     })
