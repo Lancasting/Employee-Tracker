@@ -3,13 +3,15 @@ USE employee_trackerDB;
 INSERT INTO employee(first_name, last_name, role_id)
 VALUES ('Landon', 'Crapo', 2);
 
-INSERT INTO employee(first_name, last_name, role_id)
-VALUES ('Steven', 'O', 3);
-
-INSERT INTO employee(first_name, last_name, role_id)
-VALUES ('Dylan', 'Taft', 3);
-
 USE employee_trackerDB;
+
+INSERT INTO employee(first_name, last_name, role_id, manager_id)
+VALUES ('Steven', 'O', 3, 2);
+
+INSERT INTO employee(first_name, last_name, role_id, manager_id)
+VALUES ('Dylan', 'Taft', 3, 2);
+
+
 
 INSERT INTO department(name)
 VALUES ('Web Development');

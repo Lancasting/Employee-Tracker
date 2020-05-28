@@ -141,33 +141,30 @@ function viewAllByRole() {
     })
 }
 function viewAllByManager() {
-    function viewAllByRole() {
+    
 
-        connection.query("SELECT employee.manager_id, employee.id FROM employee JOIN employee.manager_id = employee.id", function (err, data) {
-            if (err) throw err;
-            // let choices = data.map(x => `${x.id} - ${x.department}`);
-            let choices = [];
-            for (let i = 0; i < data.length; i++) {
-                choices.push(data[i]);
+    connection.query("SELECT employee.first_name, employee.last_name FROM employee WHERE manager_id IS NULL;", function (err, data) {
+        if (err) throw err;
+         let choices = [];
+         for (let i = 0; i < data.length; i++) {
+         choices.push(data[i].first_name);
+        }
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "viewByRole",
+                message: "What managers team would you like to look at?",
+                choices: [...choices]
             }
-            inquirer.prompt([
-                {
-                    type: "list",
-                    name: "viewByRole",
-                    message: "What Manager whould you like to look at?",
-                    choices: [...choices]
-                }
-            ]).then(function (res) {
-                var query = ("SELECT role.title FROM role WHERE ?")
-                connection.query(query, [res], function (err, res) {
-                    if (err) throw err;
-                    for (var i = 0; i < res.length; i++) {
-                        console.log(res);
-                    }
-                })
+        ]).then(function (res) {
+            var results = Object.values(res);
+            var query = `SELECT employee.first_name, employee.last_name, employee.manager_id FROM employee WHERE employee.manager_id = ?`
+            connection.query(query, [results[0]], function (err, res) {
+                if (err) throw err;
+                console.table(res);
             })
         })
-    }
+    })
 }
 function viewAllByDepartment() {
     connection.query()
