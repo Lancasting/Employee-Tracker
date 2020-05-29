@@ -143,11 +143,12 @@ function viewAllByRole() {
 function viewAllByManager() {
     
 
-    connection.query("SELECT employee.first_name, employee.last_name FROM employee WHERE manager_id IS NULL;", function (err, data) {
+    connection.query("SELECT employee.first_name, employee.last_name, employee.id FROM employee WHERE manager_id IS NULL;", function (err, data) {
         if (err) throw err;
-         let choices = [];
+         let choices = {name: data.first_name, id: data.id};
+         console.log(choices);
          for (let i = 0; i < data.length; i++) {
-         choices.push(data[i].first_name);
+         choices.push(data[i]);
         }
         inquirer.prompt([
             {
@@ -158,7 +159,7 @@ function viewAllByManager() {
             }
         ]).then(function (res) {
             var results = Object.values(res);
-            var query = `SELECT employee.first_name, employee.last_name, employee.manager_id FROM employee WHERE employee.manager_id = ?`
+            var query = `SELECT employee.first_name, employee.last_name, employee.manager_id FROM employee WHERE employee.first_name = ?;`
             connection.query(query, [results[0]], function (err, res) {
                 if (err) throw err;
                 console.table(res);
