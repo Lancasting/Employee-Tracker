@@ -165,39 +165,39 @@ function viewAllByManager() {
             connection.query(query, [results], function (err, res) {
                 if (err) throw err;
                 console.table(res);
+                init();
             })
         })
     })
-    init();
 }
 function viewAllByDepartment() {
-    connection.query("SELECT department.name FROM department;", function (err, data) {
+    connection.query("SELECT * FROM department;", function (err, data) {
         if (err) throw err;
-        let choices = [];
-        console.log(data);
-        for (let i = 0; i < data.length; i++) {
-            choices.push(data[i]);
-        }
+        const choices = data.map(({id, name}) => ({
+            name: name,
+            value: id
+        }))
+        console.log(choices);
         inquirer.prompt([
             {
                 type: "list",
-                name: "viewByDepartment",
+                name: "departmentId",
                 message: "What department would you like to look at?",
-                choices: [...choices]
+                choices: choices
             }
         ]).then(function (res) {
+            console.log(res);
             var results = Object.values(res);
             var query = `SELECT employee.first_name, employee.last_name, employee.role_id, role.department_id, department.id, department.name
-            FROM employee, role, department
-            JOIN department
-            ON role.department_id = department.id;`
+            FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id
+            WHERE department.id = ?;`
             connection.query(query, [results], function (err, res) {
                 if (err) throw err;
                 console.table(res);
+                init();
             })
         })
     })
-    init();
 }
 
 function addEmployee() {
@@ -216,8 +216,8 @@ function addDepartment() {
             if (err) throw err;
             return data;
         });
+        init();
     });
-    init();
 }
 function addRole() {
     connection.query()
