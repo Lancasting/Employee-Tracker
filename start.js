@@ -139,37 +139,64 @@ function viewAllByRole() {
             })
         })
     })
+    init();
 }
 function viewAllByManager() {
     
 
-    connection.query("SELECT employee.first_name, employee.last_name, employee.id FROM employee WHERE manager_id IS NULL;", function (err, data) {
+    connection.query("SELECT * FROM employee WHERE manager_id IS NULL;", function (err, data) {
         if (err) throw err;
-         let choices = {name: data.first_name, id: data.id};
+         let choices = [];
+         console.log(data);
          console.log(choices);
+         for (let i = 0; i < data.length; i++) {
+         choices.push(data[i].role_id);
+        }
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "viewByManager",
+                message: "What managers I.D team would you like to look at?",
+                choices: [...choices]
+            }
+        ]).then(function (res) {
+            var results = Object.values(res);
+            var query = `SELECT employee.first_name, employee.last_name, employee.manager_id FROM employee WHERE employee.manager_id = ?;`
+            connection.query(query, [results], function (err, res) {
+                if (err) throw err;
+                console.table(res);
+            })
+        })
+    })
+    init();
+}
+function viewAllByDepartment() {
+    connection.query("SELECT department.name FROM department;", function (err, data) {
+        if (err) throw err;
+         let choices = [];
+         console.log(data);
          for (let i = 0; i < data.length; i++) {
          choices.push(data[i]);
         }
         inquirer.prompt([
             {
                 type: "list",
-                name: "viewByRole",
-                message: "What managers team would you like to look at?",
+                name: "viewByDepartment",
+                message: "What department would you like to look at?",
                 choices: [...choices]
             }
         ]).then(function (res) {
             var results = Object.values(res);
-            var query = `SELECT employee.first_name, employee.last_name, employee.manager_id FROM employee WHERE employee.first_name = ?;`
-            connection.query(query, [results[0]], function (err, res) {
+            var query = `SELECT employee.first_name, employee.last_name, employee.manager_id FROM employee WHERE employee.manager_id = ?;`
+            connection.query(query, [results], function (err, res) {
                 if (err) throw err;
                 console.table(res);
             })
         })
     })
+    init();
 }
-function viewAllByDepartment() {
-    connection.query()
-}
+
 function addEmployee() {
     connection.query()
 }
