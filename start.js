@@ -64,7 +64,7 @@ function init() {
             case "View All Employees By Manager":
                 viewAllByManager();
                 break;
-            case "View All Employess By Department":
+            case "View All Employees By Department":
                 viewAllByDepartment();
                 break;
             case "Add An Employee":
@@ -113,11 +113,11 @@ function viewAllByRole() {
     connection.query("SELECT role.title FROM role", function (err, data) {
         if (err) throw err;
         //  console.log(data);
-         // let choices = data.map(x => `${x.id} - ${x.department}`);
-         let choices = [];
-         for (let i = 0; i < data.length; i++) {
-         choices.push(data[i].title);
-        //  console.table(data);
+        // let choices = data.map(x => `${x.id} - ${x.department}`);
+        let choices = [];
+        for (let i = 0; i < data.length; i++) {
+            choices.push(data[i].title);
+            //  console.table(data);
         }
 
         // var choices = Object.values(data);
@@ -142,15 +142,15 @@ function viewAllByRole() {
     init();
 }
 function viewAllByManager() {
-    
+
 
     connection.query("SELECT * FROM employee WHERE manager_id IS NULL;", function (err, data) {
         if (err) throw err;
-         let choices = [];
-         console.log(data);
-         console.log(choices);
-         for (let i = 0; i < data.length; i++) {
-         choices.push(data[i].role_id);
+        let choices = [];
+        console.log(data);
+        console.log(choices);
+        for (let i = 0; i < data.length; i++) {
+            choices.push(data[i].role_id);
         }
         inquirer.prompt([
             {
@@ -173,10 +173,10 @@ function viewAllByManager() {
 function viewAllByDepartment() {
     connection.query("SELECT department.name FROM department;", function (err, data) {
         if (err) throw err;
-         let choices = [];
-         console.log(data);
-         for (let i = 0; i < data.length; i++) {
-         choices.push(data[i]);
+        let choices = [];
+        console.log(data);
+        for (let i = 0; i < data.length; i++) {
+            choices.push(data[i]);
         }
         inquirer.prompt([
             {
@@ -187,7 +187,10 @@ function viewAllByDepartment() {
             }
         ]).then(function (res) {
             var results = Object.values(res);
-            var query = `SELECT employee.first_name, employee.last_name, employee.manager_id FROM employee WHERE employee.manager_id = ?;`
+            var query = `SELECT employee.first_name, employee.last_name, employee.role_id, role.department_id, department.id, department.name
+            FROM employee, role, department
+            JOIN department
+            ON role.department_id = department.id;`
             connection.query(query, [results], function (err, res) {
                 if (err) throw err;
                 console.table(res);
@@ -201,7 +204,20 @@ function addEmployee() {
     connection.query()
 }
 function addDepartment() {
-    connection.query()
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "department",
+            message: "Enter the department's name:",
+            validate: validateString
+        }
+    ]).then(function (data) {
+        var query = connection.query(`INSERT INTO department (name) VALUES ('${data.department}');`, function (err, data) {
+            if (err) throw err;
+            return data;
+        });
+    });
+    init();
 }
 function addRole() {
     connection.query()
