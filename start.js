@@ -361,6 +361,11 @@ function updateEmpRole() {
                 name: "updateRole",
                 message: "what employee would you like to update?",
                 choices: choices
+            },
+            {
+                type: "input",
+                name: "newRole",
+                
             }
             
         ]).then(function (res){
