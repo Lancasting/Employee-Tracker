@@ -142,8 +142,6 @@ function viewAllByRole() {
     init();
 }
 function viewAllByManager() {
-
-
     connection.query("SELECT * FROM employee WHERE manager_id IS NULL;", function (err, data) {
         if (err) throw err;
         let choices = [];
@@ -173,7 +171,7 @@ function viewAllByManager() {
 function viewAllByDepartment() {
     connection.query("SELECT * FROM department;", function (err, data) {
         if (err) throw err;
-        const choices = data.map(({id, name}) => ({
+        const choices = data.map(({ id, name }) => ({
             name: name,
             value: id
         }))
@@ -219,20 +217,128 @@ function addDepartment() {
         init();
     });
 }
+// not working
 function addRole() {
-    connection.query()
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "addRole",
+            message: "Please enter the new role",
+            validate: validateString
+        },
+        {
+            type: "input",
+            name: "addSalary",
+            message: "Please enter the salary for this role",
+            validate: validateNumber
+        },
+        {
+            type: "input",
+            name: "departmentId",
+            message: "What department ID?",
+            validate: validateNumber
+        }
+    ]).then(function (data) {
+        console.log(data);
+        var query = connection.query(`INSERT INTO role (title, salary, department_id) VALUES (${data.addRole}, ${data.addSalary}, ${data.departmentId});`, function (err, data) {
+            if (err) throw err;
+            return (data);
+        });
+        init()
+    });
 }
+
 function removeEmployee() {
-    connection.query()
+    connection.query("SELECT * FROM employee;", function (err, data) {
+        if (err) throw err;
+        const choices = data.map(({ id, first_name }) => ({
+            name: first_name,
+            value: id
+        }))
+        console.log(choices);
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "removeEmployee",
+                message: "what employee do you want to remove?",
+                choices: choices
+            }
+        ]).then(function (res){
+            let query = connection.query(`DELETE FROM employee WHERE employee.id = ${res.id};`, function (err, res){
+                if (err) throw err;
+                return data;
+            })
+        })
+})
 }
 function removeDepartment() {
-    connection.query()
+    connection.query("SELECT * FROM department;", function (err, data) {
+        if (err) throw err;
+        const choices = data.map(({ id, name }) => ({
+            name: name,
+            value: id
+        }))
+        console.log(choices);
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "removeDepartment",
+                message: "what department do you want to remove?",
+                choices: choices
+            }
+        ]).then(function (res){
+            let query = connection.query(`DELETE FROM department WHERE department.id = ${res.id};`, function (err, res){
+                if (err) throw err;
+                return res;
+            })
+        })
+})
 }
 function removeRole() {
-    connection.query()
+    connection.query("SELECT * FROM department;", function (err, data) {
+        if (err) throw err;
+        const choices = data.map(({ id, name }) => ({
+            name: name,
+            value: id
+        }))
+        console.log(choices);
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "removeRole",
+                message: "what role do you want to remove?",
+                choices: choices
+            }
+        ]).then(function (res){
+            let query = connection.query(`DELETE FROM role WHERE role.id = ${res.id};`, function (err, res){
+                if (err) throw err;
+                return res;
+            })
+        })
+})
 }
 function updateEmpRole() {
-    connection.query()
+    connection.query("SELECT * FROM employee;", function (err, data) {
+        if (err) throw err;
+        const choices = data.map(({ id, name }) => ({
+            name: name,
+            value: id
+        }))
+        console.log(choices);
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "removeRole",
+                message: "what employee would you like to update?",
+                choices: choices
+            }
+        ]).then(function (res){
+            let query = connection.query(//not sure};`, function (err, res){
+                if (err) throw err;
+                return res;
+            })
+        })
+})
 }
 // function updateEmpManager(){
 //     connection.query()
