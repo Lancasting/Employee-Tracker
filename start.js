@@ -121,7 +121,6 @@ function viewAllByRole() {
         }
 
         // var choices = Object.values(data);
-        console.log(choices);
         inquirer.prompt([
             {
                 type: "list",
@@ -136,17 +135,15 @@ function viewAllByRole() {
             connection.query(query, [results[0]], function (err, res) {
                 if (err) throw err;
                 console.table(res);
+                init();
             })
         })
     })
-    init();
 }
 function viewAllByManager() {
     connection.query("SELECT * FROM employee WHERE manager_id IS NULL;", function (err, data) {
         if (err) throw err;
         let choices = [];
-        console.log(data);
-        console.log(choices);
         for (let i = 0; i < data.length; i++) {
             choices.push(data[i].role_id);
         }
@@ -175,7 +172,6 @@ function viewAllByDepartment() {
             name: name,
             value: id
         }))
-        console.log(choices);
         inquirer.prompt([
             {
                 type: "list",
@@ -184,7 +180,6 @@ function viewAllByDepartment() {
                 choices: choices
             }
         ]).then(function (res) {
-            console.log(res);
             var results = Object.values(res);
             var query = `SELECT employee.first_name, employee.last_name, employee.role_id, role.department_id, department.id, department.name
             FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id
@@ -199,7 +194,38 @@ function viewAllByDepartment() {
 }
 
 function addEmployee() {
-    connection.query()
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "firstName",
+            message: "Enter the employee's first name:",
+            validate: validateString
+        },
+        {
+            type: "input",
+            name: "lastName",
+            message: "Enter the employee's last name",
+            validate: validateString
+        },
+        {
+            type: "input",
+            name: "roleId",
+            message: "What role ID should they have?",
+            validate: validateString
+        },
+        {
+            type: "input",
+            name: "managerID",
+            message: "What is their manager ID?"
+        }
+    ]).then(function (res) {
+
+        var query = connection.query(`INSERT INTO employee (employee.first_name, employee.last_name, employee.role_id, employee.manager_id) VALUES (${res.firstName}, ${res.lastName}, ${res.roleId}, ${res.managerID});`, function (err, data) {
+            if (err) throw err;
+            return data;
+        });
+        init();
+    });
 }
 function addDepartment() {
     inquirer.prompt([
@@ -238,11 +264,12 @@ function addRole() {
             message: "What department ID?",
             validate: validateNumber
         }
-    ]).then(function (data) {
-        console.log(data);
-        var query = connection.query(`INSERT INTO role (title, salary, department_id) VALUES (${data.addRole}, ${data.addSalary}, ${data.departmentId});`, function (err, data) {
+    ]).then(function (res) {
+        var results = Object.values(res);
+        var query = `INSERT INTO role (title, salary, department_id) VALUES (?);`
+        connection.query(query, [results], function (err,res){
             if (err) throw err;
-            return (data);
+            return (res);
         });
         init()
     });
@@ -255,7 +282,6 @@ function removeEmployee() {
             name: first_name,
             value: id
         }))
-        console.log(choices);
         inquirer.prompt([
             {
                 type: "list",
@@ -264,10 +290,12 @@ function removeEmployee() {
                 choices: choices
             }
         ]).then(function (res){
-            let query = connection.query(`DELETE FROM employee WHERE employee.id = ${res.id};`, function (err, res){
+            var results = Object.values(res);
+            let query = connection.query(`DELETE FROM employee WHERE employee.id = ${results};`, function (err, res){
                 if (err) throw err;
-                return data;
+                return res;
             })
+            init();
         })
 })
 }
@@ -277,8 +305,7 @@ function removeDepartment() {
         const choices = data.map(({ id, name }) => ({
             name: name,
             value: id
-        }))
-        console.log(choices);
+        }));
         inquirer.prompt([
             {
                 type: "list",
@@ -287,21 +314,22 @@ function removeDepartment() {
                 choices: choices
             }
         ]).then(function (res){
-            let query = connection.query(`DELETE FROM department WHERE department.id = ${res.id};`, function (err, res){
+            var results = Object.values(res);
+            let query = connection.query(`DELETE FROM department WHERE department.id = ${results};`, function (err, res){
                 if (err) throw err;
                 return res;
             })
+            init();
         })
 })
 }
 function removeRole() {
-    connection.query("SELECT * FROM department;", function (err, data) {
+    connection.query("SELECT * FROM role;", function (err, data) {
         if (err) throw err;
-        const choices = data.map(({ id, name }) => ({
-            name: name,
+        const choices = data.map(({ id, title }) => ({
+            name: title,
             value: id
         }))
-        console.log(choices);
         inquirer.prompt([
             {
                 type: "list",
@@ -310,10 +338,13 @@ function removeRole() {
                 choices: choices
             }
         ]).then(function (res){
-            let query = connection.query(`DELETE FROM role WHERE role.id = ${res.id};`, function (err, res){
+            var results = Object.values(res);
+            console.log(results);
+            let query = connection.query(`DELETE FROM role WHERE role.id = ${results};`, function (err, res){
                 if (err) throw err;
                 return res;
             })
+            init();
         })
 })
 }
@@ -323,22 +354,19 @@ function updateEmpRole() {
         const choices = data.map(({ id, name }) => ({
             name: name,
             value: id
-        }))
-        console.log(choices);
+        }));
         inquirer.prompt([
             {
                 type: "list",
-                name: "removeRole",
+                name: "updateRole",
                 message: "what employee would you like to update?",
                 choices: choices
             }
+            
         ]).then(function (res){
-            let query = connection.query(//not sure};`, function (err, res){
-                if (err) throw err;
-                return res;
-            })
-        })
-})
+            let query = ``
+        });
+});
 }
 // function updateEmpManager(){
 //     connection.query()
