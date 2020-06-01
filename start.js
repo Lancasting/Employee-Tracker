@@ -1,16 +1,9 @@
 var connection = require("./db/connection");
 var mysql = require("mysql");
-
-// class to insert data in database
-
-// constructor for connection
-
 this.connection = connection
 const consoleTable = require("console.table");
 const inquirer = require("inquirer");
-
 const printMessage = require('print-message');
-
 function validateString(answer) {
     if (answer != "" && isNaN(parseInt(answer))) {
         return true;
@@ -23,13 +16,11 @@ function validateNumber(answer) {
     }
     return false;
 }
-
 printMessage([
     "Employee Tracker",
     "Follow the prompts to view employees and make changes",
 
 ]);
-
 function init() {
     inquirer.prompt([
         {
@@ -48,9 +39,6 @@ function init() {
                 "Remove Department",
                 "Remove Role",
                 "Update Employee's Role",
-                // "Update Employee's Manager",
-                // "Update Employee's Department",
-                // "View Budget of Department"
             ]
         }
     ]).then(function (answer) {
@@ -88,16 +76,6 @@ function init() {
             case "Update Employee's Role":
                 updateEmpRole()
                 break;
-            // case "Update Employee's Manager":
-            //     updateEmpManager()
-            //     break;
-            // case "Update Employee's Department":
-            //     updateEmpDepartment()
-            //     break;
-            // case "View Budget of Department":
-            //     viewBudget();
-            //     break;
-
         }
     });
 }
@@ -112,15 +90,10 @@ function viewAllByRole() {
 
     connection.query("SELECT role.title FROM role", function (err, data) {
         if (err) throw err;
-        //  console.log(data);
-        // let choices = data.map(x => `${x.id} - ${x.department}`);
         let choices = [];
         for (let i = 0; i < data.length; i++) {
             choices.push(data[i].title);
-            //  console.table(data);
         }
-
-        // var choices = Object.values(data);
         inquirer.prompt([
             {
                 type: "list",
@@ -192,7 +165,6 @@ function viewAllByDepartment() {
         })
     })
 }
-
 function addEmployee() {
     inquirer.prompt([
         {
@@ -220,7 +192,6 @@ function addEmployee() {
         }
     ]).then(function (res) {
         var results = Object.values(res);
-        console.log(results);
         var query = `INSERT INTO employee (employee.first_name, employee.last_name, employee.role_id, employee.manager_id) VALUES (?);`
         connection.query(query, [results], function (err, res) {
             if (err) throw err;
@@ -239,7 +210,6 @@ function addDepartment() {
         }
     ]).then(function (res) {
         var results = Object.values(res);
-        console.log(results);
         var query = `INSERT INTO department (name) VALUES (?);`
         connection.query(query, [results], function (err, data) {
             if (err) throw err;
@@ -248,7 +218,6 @@ function addDepartment() {
         init();
     });
 }
-// not working
 function addRole() {
     inquirer.prompt([
         {
@@ -279,7 +248,6 @@ function addRole() {
         init()
     });
 }
-
 function removeEmployee() {
     connection.query("SELECT * FROM employee;", function (err, data) {
         if (err) throw err;
@@ -344,7 +312,6 @@ function removeRole() {
             }
         ]).then(function (res) {
             var results = Object.values(res);
-            console.log(results);
             let query = connection.query(`DELETE FROM role WHERE role.id = ${results};`, function (err, res) {
                 if (err) throw err;
                 return res;
@@ -372,7 +339,6 @@ function updateEmpRole() {
             let query = `SELECT * FROM employee WHERE ?`;
             connection.query(query, { id: res.name }, function (err, results) {
                 if (err) throw err;
-                console.log(results[0].id);
                 inquirer.prompt([
                     {
                         type: "input",
@@ -381,8 +347,8 @@ function updateEmpRole() {
                         validate: validateNumber
                     }
                 ]).then(function (res) {
-                    const newRoleId = {role_id: res.id};
-                    const updateId = {id: results[0].id};
+                    const newRoleId = { role_id: res.id };
+                    const updateId = { id: results[0].id };
                     let query = `UPDATE employee SET ? WHERE ?`
                     connection.query(query, [newRoleId, updateId], function (err, results) {
                         if (err) throw err;
@@ -393,148 +359,4 @@ function updateEmpRole() {
         });
     });
 }
-// function updateEmpManager(){
-//     connection.query()
-// }
-// function updateEmpDepartment(){
-//     connection.query()
-// }
-// function viewbu(){
-//     connection.query()
-// }
 init();
-    // function addRole() {
-    //     var query = connection.query("SELECT id, department FROM department", function(err, data) {
-    //         if (err) throw err;
-    //         // let choices = data.map(x => `${x.id} - ${x.department}`);
-    //         let choices = [];
-    //         for (let i = 0; i < data.length; i++) {
-    //             choices.push(data[i].id + " - " + data[i].department);
-    //         }
-    //         inquirer.prompt([
-    //             {
-    //                 type: "input",
-    //                 name: "title",
-    //                 message: "Enter the role name:",
-    //                 validate: validateString
-    //             },
-    //             {
-    //                 type: "input",
-    //                 name: "salary",
-    //                 message: "Enter the salary:",
-    //                 validate: validateNumber
-    //             },
-    //             {
-    //                 type: "list",
-    //                 name: "department",
-    //                 message: "Select the department:",
-    //                 choices: [...choices]
-    //             }
-    //         ]).then(function(data) {
-    //             var arr = data.department.split(" ");
-    //             var deptID = parseInt(arr[0]);
-    //             var query = connection.query(`INSERT INTO role (title, salary, department_id) VALUES ('${data.title}', ${data.salary}, ${deptID})`, function(err, data) {
-    //                 if (err) throw err;
-    //                 init();
-    //             });
-    //         });
-    //     });
-    // }
-    // function addDepartment() {
-    //     inquirer.prompt([
-    //         {
-    //             type: "input",
-    //             name: "department",
-    //             message: "Enter the department's name:",
-    //             validate: validateString
-    //         }
-    //     ]).then(function(data) {
-    //         var query = connection.query(`INSERT INTO department (department) VALUES ('${data.department}');`, function(err, data) {
-    //             if (err) throw err;
-    //             return data;
-    //             init();
-    //     });
-    // });
-    // }
-    // function updateEmployee() {
-    //     const emp = {
-    //         first_name: "",
-    //         last_name: "",
-    //         role_id: 0,
-    //         manager_id: 0,
-    //         empID: 0
-    //     };
-    //     var query = connection.query("SELECT id, first_name, last_name FROM employee", function(err, data) {
-    //         if (err) throw err;
-    //         let choices = data.map(x => `${x.id} - ${x.first_name} ${x.last_name}`);
-    //         inquirer.prompt([
-    //             {
-    //                 type: "list",
-    //                 name: "employee",
-    //                 message: "Select an employee:",
-    //                 choices: [...choices]
-    //             }
-    //         ]).then(function(data) {
-    //             var arr = data.employee.split(" ");
-    //             emp.empID = parseInt(arr[0]);
-    //             inquirer.prompt([
-    //                 {
-    //                     type: "input",
-    //                     name: "firstName",
-    //                     message: "Enter the employee's first name:",
-    //                     validate: validateString
-    //                 },
-    //                 {
-    //                     type: "input",
-    //                     name: "lastName",
-    //                     message: "Enter the employee's last name:",
-    //                     validate: validateString
-    //                 }
-    //             ]).then(function(data) {
-    //                 emp.first_name = data.firstName;
-    //                 emp.last_name = data.lastName;
-    //                 var query = connection.query("SELECT id, title FROM role", function(err, data) {
-    //                     if (err) throw err;
-    //                     let choices = data.map(x => `${x.id} - ${x.title}`);
-    //                     inquirer.prompt([
-    //                         {
-    //                             type: "list",
-    //                             name: "title",
-    //                             message: "Select a title:",
-    //                             choices: [...choices]
-    //                         }
-    //                     ]).then(function(data) {
-    //                         var arr = data.title.split(" ");
-    //                         emp.role_id = parseInt(arr[0]);
-    //                         var query = connection.query("SELECT id, first_name, last_name FROM employee", function(err, data) {
-    //                             if (err) throw err;
-    //                             let choices = data.map(x => `${x.id} - ${x.first_name} ${x.last_name}`);
-    //                             choices.push("This employee does not have a manager");
-    //                             inquirer.prompt([
-    //                                 {
-    //                                     type: "list",
-    //                                     name: "manager",
-    //                                     message: "Select this employee's manager:",
-    //                                     choices: [...choices]
-    //                                 }
-    //                             ]).then(function(data) {
-    //                                 if (data.manager === "This employee does not have a manager") {
-    //                                     emp.manager_id = null;
-    //                                 }
-    //                                 else {
-    //                                     var arr = data.manager.split(" ");
-    //                                     emp.manager_id = parseInt(arr[0]);
-    //                                 }
-    //                                 var query = connection.query(`UPDATE employee SET first_name = '${emp.first_name}', last_name = '${emp.last_name}', role_id = ${emp.role_id}, manager_id = ${emp.manager_id} WHERE id = ${emp.empID}`, function(err, data) {
-    //                                     if (err) throw err;
-    //                                     init();
-    //                                     return data;
-    //                                 });
-    //                             });
-    //                         });
-    //                     });
-    //                 });
-    //             });
-    //         });
-    //     });
-    // }
