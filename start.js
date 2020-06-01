@@ -211,7 +211,7 @@ function addEmployee() {
             type: "input",
             name: "roleId",
             message: "What role ID should they have?",
-            validate: validateString
+            validate: validateNumber
         },
         {
             type: "input",
@@ -219,10 +219,12 @@ function addEmployee() {
             message: "What is their manager ID?"
         }
     ]).then(function (res) {
-
-        var query = connection.query(`INSERT INTO employee (employee.first_name, employee.last_name, employee.role_id, employee.manager_id) VALUES (${res.firstName}, ${res.lastName}, ${res.roleId}, ${res.managerID});`, function (err, data) {
+        var results = Object.values(res);
+        console.log(results);
+        var query = `INSERT INTO employee (employee.first_name, employee.last_name, employee.role_id, employee.manager_id) VALUES (?);`
+        connection.query(query, [results], function (err, res) {
             if (err) throw err;
-            return data;
+            return res;
         });
         init();
     });
@@ -235,8 +237,11 @@ function addDepartment() {
             message: "Enter the department's name:",
             validate: validateString
         }
-    ]).then(function (data) {
-        var query = connection.query(`INSERT INTO department (name) VALUES ('${data.department}');`, function (err, data) {
+    ]).then(function (res) {
+        var results = Object.values(res);
+        console.log(results);
+        var query = `INSERT INTO department (name) VALUES (?);`
+        connection.query(query, [results], function (err, data) {
             if (err) throw err;
             return data;
         });
@@ -267,7 +272,7 @@ function addRole() {
     ]).then(function (res) {
         var results = Object.values(res);
         var query = `INSERT INTO role (title, salary, department_id) VALUES (?);`
-        connection.query(query, [results], function (err,res){
+        connection.query(query, [results], function (err, res) {
             if (err) throw err;
             return (res);
         });
@@ -289,15 +294,15 @@ function removeEmployee() {
                 message: "what employee do you want to remove?",
                 choices: choices
             }
-        ]).then(function (res){
+        ]).then(function (res) {
             var results = Object.values(res);
-            let query = connection.query(`DELETE FROM employee WHERE employee.id = ${results};`, function (err, res){
+            let query = connection.query(`DELETE FROM employee WHERE employee.id = ${results};`, function (err, res) {
                 if (err) throw err;
                 return res;
             })
             init();
         })
-})
+    })
 }
 function removeDepartment() {
     connection.query("SELECT * FROM department;", function (err, data) {
@@ -313,15 +318,15 @@ function removeDepartment() {
                 message: "what department do you want to remove?",
                 choices: choices
             }
-        ]).then(function (res){
+        ]).then(function (res) {
             var results = Object.values(res);
-            let query = connection.query(`DELETE FROM department WHERE department.id = ${results};`, function (err, res){
+            let query = connection.query(`DELETE FROM department WHERE department.id = ${results};`, function (err, res) {
                 if (err) throw err;
                 return res;
             })
             init();
         })
-})
+    })
 }
 function removeRole() {
     connection.query("SELECT * FROM role;", function (err, data) {
@@ -337,41 +342,56 @@ function removeRole() {
                 message: "what role do you want to remove?",
                 choices: choices
             }
-        ]).then(function (res){
+        ]).then(function (res) {
             var results = Object.values(res);
             console.log(results);
-            let query = connection.query(`DELETE FROM role WHERE role.id = ${results};`, function (err, res){
+            let query = connection.query(`DELETE FROM role WHERE role.id = ${results};`, function (err, res) {
                 if (err) throw err;
                 return res;
             })
             init();
         })
-})
+    })
 }
 function updateEmpRole() {
     connection.query("SELECT * FROM employee;", function (err, data) {
         if (err) throw err;
-        const choices = data.map(({ id, name }) => ({
-            name: name,
-            value: id
-        }));
+        let employees = [];
+        data.forEach(employee => {
+            employees.push(`${employee.id}) ${employee.first_name} ${employee.last_name}`)
+        });
         inquirer.prompt([
             {
                 type: "list",
-                name: "updateRole",
+                name: "name",
                 message: "what employee would you like to update?",
-                choices: choices
+                choices: employees
             },
-            {
-                type: "input",
-                name: "newRole",
-                
-            }
-            
-        ]).then(function (res){
-            let query = ``
+        ]).then(function (res) {
+            res.name = res.name.split(')')[0];
+            let query = `SELECT * FROM employee WHERE ?`;
+            connection.query(query, { id: res.name }, function (err, results) {
+                if (err) throw err;
+                console.log(results[0].id);
+                inquirer.prompt([
+                    {
+                        type: "input",
+                        name: "id",
+                        message: "What is the new role ID?", default: results.role_id,
+                        validate: validateNumber
+                    }
+                ]).then(function (res) {
+                    const newRoleId = {role_id: res.id};
+                    const updateId = {id: results[0].id};
+                    let query = `UPDATE employee SET ? WHERE ?`
+                    connection.query(query, [newRoleId, updateId], function (err, results) {
+                        if (err) throw err;
+                        init();
+                    });
+                });
+            });
         });
-});
+    });
 }
 // function updateEmpManager(){
 //     connection.query()
