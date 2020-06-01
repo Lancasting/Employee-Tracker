@@ -1,137 +1,212 @@
-# Unit 12 MySQL Homework: Employee Tracker
 
-Developers are often tasked with creating interfaces that make it easy for non-developers to view and interact with information stored in databases. Often these interfaces are known as **C**ontent **M**anagement **S**ystems. In this homework assignment, your challenge is to architect and build a solution for managing a company's employees using node, inquirer, and MySQL.
+# Project Title: Employee Tracker
 
-## Instructions
+# Instructions:
 
-Design the following database schema containing three tables:
+To run this application you will need to run node with the following command:
 
-![Database Schema](Assets/schema.png)
+> node start.js
 
-* **department**:
+Then follow the prompts.
 
-  * **id** - INT PRIMARY KEY
-  * **name** - VARCHAR(30) to hold department name
+# Description of the project: 
 
-* **role**:
+Using a Sequel database keep track of the employees in your workforce.
 
-  * **id** - INT PRIMARY KEY
-  * **title** -  VARCHAR(30) to hold role title
-  * **salary** -  DECIMAL to hold role salary
-  * **department_id** -  INT to hold reference to department role belongs to
+# User story
 
-* **employee**:
+As an Office Administrator
 
-  * **id** - INT PRIMARY KEY
-  * **first_name** - VARCHAR(30) to hold employee first name
-  * **last_name** - VARCHAR(30) to hold employee last name
-  * **role_id** - INT to hold reference to role employee has
-  * **manager_id** - INT to hold reference to another employee that manager of the current employee. This field may be null if the employee has no manager
-  
-Build a command-line application that at a minimum allows the user to:
+I want to be able to track current employees, their roles, salaries, and what department they are in
 
-  * Add departments, roles, employees
+So that I can quickly and accurately keep track.
 
-  * View departments, roles, employees
+# table of contents
 
-  * Update employee roles
+* [Instructions](#Instructions)
+* [License](#License)
+* [Installation](#Installation)
+* [Github](#Github)
 
-Bonus points if you're able to:
+# Installation
 
-  * Update employee managers
+To install the application clone the repository to your computer and run it with Node.js. 
+You will then be prompted on what you want to do.
 
-  * View employees by manager
+# Usage
 
-  * Delete departments, roles, and employees
+This is useful to quickly look up and add employees to your company.
 
-  * View the total utilized budget of a department -- ie the combined salaries of all employees in that department
+# Contributing
 
-We can frame this challenge as follows:
+## Contributor Covenant Code of Conduct
 
-```
-As a business owner
-I want to be able to view and manage the departments, roles, and employees in my company
-So that I can organize and plan my business
-```
+### Our Pledge
 
-How do you deliver this? Here are some guidelines:
+We as members, contributors, and leaders pledge to make participation in our
+community a harassment-free experience for everyone, regardless of age, body
+size, visible or invisible disability, ethnicity, sex characteristics, gender
+identity and expression, level of experience, education, socio-economic status,
+nationality, personal appearance, race, religion, or sexual identity
+and orientation.
 
-* Use the [MySQL](https://www.npmjs.com/package/mysql) NPM package to connect to your MySQL database and perform queries.
+We pledge to act and interact in ways that contribute to an open, welcoming,
+diverse, inclusive, and healthy community.
 
-* Use [InquirerJs](https://www.npmjs.com/package/inquirer/v/0.2.3) NPM package to interact with the user via the command-line.
+### Our Standards
 
-* Use [console.table](https://www.npmjs.com/package/console.table) to print MySQL rows to the console. There is a built-in version of `console.table`, but the NPM package formats the data a little better for our purposes.
+Examples of behavior that contributes to a positive environment for our
+community include:
 
-* You may wish to have a separate file containing functions for performing specific SQL queries you'll need to use. Could a constructor function or a class be helpful for organizing these?
+* Demonstrating empathy and kindness toward other people
+* Being respectful of differing opinions, viewpoints, and experiences
+* Giving and gracefully accepting constructive feedback
+* Accepting responsibility and apologizing to those affected by our mistakes,
+  and learning from the experience
+* Focusing on what is best not just for us as individuals, but for the
+  overall community
 
-* You will need to perform a variety of SQL JOINS to complete this assignment, and it's recommended you review the week's activities if you need a refresher on this.
+Examples of unacceptable behavior include:
 
-![Employee Tracker](Assets/employee-tracker.gif)
+* The use of sexualized language or imagery, and sexual attention or
+  advances of any kind
+* Trolling, insulting or derogatory comments, and personal or political attacks
+* Public or private harassment
+* Publishing others' private information, such as a physical or email
+  address, without their explicit permission
+* Other conduct which could reasonably be considered inappropriate in a
+  professional setting
 
-### Hints
+### Enforcement Responsibilities
 
-* You may wish to include a `seed.sql` file to pre-populate your database. This will make development of individual features much easier.
+Community leaders are responsible for clarifying and enforcing our standards of
+acceptable behavior and will take appropriate and fair corrective action in
+response to any behavior that they deem inappropriate, threatening, offensive,
+or harmful.
 
-* Focus on getting the basic functionality completed before working on more advanced features.
+Community leaders have the right and responsibility to remove, edit, or reject
+comments, commits, code, wiki edits, issues, and other contributions that are
+not aligned to this Code of Conduct, and will communicate reasons for moderation
+decisions when appropriate.
 
-* Review the week's activities for a refresher on MySQL.
+### Scope
 
-* Check out [SQL Bolt](https://sqlbolt.com/) for some extra MySQL help.
+This Code of Conduct applies within all community spaces, and also applies when
+an individual is officially representing the community in public spaces.
+Examples of representing our community include using an official e-mail address,
+posting via an official social media account, or acting as an appointed
+representative at an online or offline event.
 
-## Minimum Requirements
+### Enforcement
 
-* Functional application.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be
+reported to the community leaders responsible for enforcement at
+[INSERT CONTACT METHOD].
+All complaints will be reviewed and investigated promptly and fairly.
 
-* GitHub repository with a unique name and a README describing the project.
+All community leaders are obligated to respect the privacy and security of the
+reporter of any incident.
 
-* The command-line application should allow users to:
+### Enforcement Guidelines
 
-  * Add departments, roles, employees
+Community leaders will follow these Community Impact Guidelines in determining
+the consequences for any action they deem in violation of this Code of Conduct:
 
-  * View departments, roles, employees
+### 1. Correction
 
-  * Update employee roles
+**Community Impact**: Use of inappropriate language or other behavior deemed
+unprofessional or unwelcome in the community.
 
-## Bonus
+**Consequence**: A private, written warning from community leaders, providing
+clarity around the nature of the violation and an explanation of why the
+behavior was inappropriate. A public apology may be requested.
 
-* The command-line application should allow users to:
+### 2. Warning
 
-  * Update employee managers
+**Community Impact**: A violation through a single incident or series
+of actions.
 
-  * View employees by manager
+**Consequence**: A warning with consequences for continued behavior. No
+interaction with the people involved, including unsolicited interaction with
+those enforcing the Code of Conduct, for a specified period of time. This
+includes avoiding interactions in community spaces as well as external channels
+like social media. Violating these terms may lead to a temporary or
+permanent ban.
 
-  * Delete departments, roles, and employees
+### 3. Temporary Ban
 
-  * View the total utilized budget of a department -- ie the combined salaries of all employees in that department
+**Community Impact**: A serious violation of community standards, including
+sustained inappropriate behavior.
 
-## Commit Early and Often
+**Consequence**: A temporary ban from any sort of interaction or public
+communication with the community for a specified period of time. No public or
+private interaction with the people involved, including unsolicited interaction
+with those enforcing the Code of Conduct, is allowed during this period.
+Violating these terms may lead to a permanent ban.
 
-One of the most important skills to master as a web developer is version control. Building the habit of committing via Git is important for two reasons:
+### 4. Permanent Ban
 
-* Your commit history is a signal to employers that you are actively working on projects and learning new skills.
+**Community Impact**: Demonstrating a pattern of violation of community
+standards, including sustained inappropriate behavior,  harassment of an
+individual, or aggression toward or disparagement of classes of individuals.
 
-* Your commit history allows you to revert your codebase in the event that you need to return to a previous state.
+**Consequence**: A permanent ban from any sort of public interaction within
+the community.
 
-Follow these guidelines for committing:
+### Attribution
 
-* Make single-purpose commits for related changes to ensure a clean, manageable history. If you are fixing two issues, make two commits.
+This Code of Conduct is adapted from the [Contributor Covenant][homepage],
+version 2.0, available at
+https://www.contributor-covenant.org/version/2/0/code_of_conduct.html.
 
-* Write descriptive, meaningful commit messages so that you and anyone else looking at your repository can easily understand its history.
+Community Impact Guidelines were inspired by [Mozilla's code of conduct
+enforcement ladder](https://github.com/mozilla/diversity).
 
-* Don't commit half-done work, for the sake of your collaborators (and your future self!).
+[homepage]: https://www.contributor-covenant.org
 
-* Test your application before you commit to ensure functionality at every step in the development process.
+For answers to common questions about this code of conduct, see the FAQ at
+https://www.contributor-covenant.org/faq. Translations are available at
+https://www.contributor-covenant.org/translations.
 
-We would like you to have well over 200 commits by graduation, so commit early and often!
+# License 
 
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-## Submission on BCS
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-You are required to submit the following:
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
-* The URL of the GitHub repository
+# Github
 
-* A video demonstrating the entirety of the app's functionality 
+![Profile Image](https://avatars2.githubusercontent.com/u/60726033?v=4)
 
-- - -
-© 2019 Trilogy Education Services, a 2U, Inc. brand. All Rights Reserved.
+Github Email: samuellancaster66@gmail.com
+
+![built-with-love](https://forthebadge.com/images/badges/built-with-love.svg)
+
+# Tests
+
+Running the code will look like this:
+
+<pre><code>$ node start.js
+Select an option: (Use arrow keys)
+>View All Employees
+View All Employees By Role
+View All Employees By Manager
+View All Employees By Department
+Add An Employee
+Add A Department
+Add A Role
+(Move up and down to reveal more choices)</code></pre>
