@@ -196,6 +196,11 @@ Github Email: samuellancaster66@gmail.com
 
 ![built-with-love](https://forthebadge.com/images/badges/built-with-love.svg)
 
+# Video of application being used
+
+[Youtube Link](https://youtu.be/8teQCXj_-94)
+
+
 # Tests
 
 Running the code will look like this:
